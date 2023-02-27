@@ -34,7 +34,7 @@ const displayPhones = (phones) => {
     const div = document.createElement("div");
     div.classList.add("col");
 
-    const { image, phone_name, brand } = phone;
+    const { image, phone_name, brand,slug } = phone;
 
     div.innerHTML = `
        <div class="card">
@@ -44,6 +44,10 @@ const displayPhones = (phones) => {
                   <h6  >Brand name :${brand}</h6>
 
                   <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+
+                 <button onclick="showDetails('${slug}')" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Details
+      </button>
                 </div>
               </div>
        
@@ -54,6 +58,46 @@ const displayPhones = (phones) => {
 
   loader(false) ;
 };
+
+
+// show details 
+
+const showDetails = async (id) => {
+
+const res = await fetch(` https://openapi.programming-hero.com/api/phone/${id}`)
+
+const data = await res.json() ;
+
+showModal(data.data);
+
+}
+
+// show modal 
+
+const showModal = (phone) => {
+console.log(phone);
+const {name,slug,releaseDate,brand } = phone ;
+
+const container = document.getElementById('exampleModalLabel');
+container.innerText= name ;
+
+const modalBody = document.getElementById('modal-body')
+modalBody.innerHTML=`<p>
+model: ${slug}</p>
+
+<p>Release Date : ${releaseDate} </p>
+brand: ${brand}
+
+`
+
+}
+
+
+
+
+
+
+
 
 // show all data
 
