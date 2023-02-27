@@ -1,28 +1,42 @@
+const loadPhones = async (id) => {
+  loader(true);
+  const search = document.getElementById("search-text");
+  const searchText = search.value;
+  const searchT = id || searchText;
+  const res = await fetch(
+    `https://openapi.programming-hero.com/api/phones?search=${searchT}`
+  );
 
-const loadPhones =async(searchText) =>{
+  const data = await res.json();
+  displayPhones(data.data.slice(0, 3));
+};
 
- const res = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchText}`) ;
-
- const data = await res.json() ;
- displayPhones(data.data );
-
-}
+// display data...................................
 
 const displayPhones = (phones) => {
+  // console.log(phones)
 
-    // console.log(phones)
-    const phoneContainer = document.getElementById('phones-container') ;
+  if(phones.length === 0) {
+    document.getElementById("show-all").classList.add("d-none");
+    document.getElementById("not-found").classList.remove("d-none");
 
-    phoneContainer.innerHTML="" ;
 
-    phones.forEach(phone => {
+  } else {
+    document.getElementById("not-found").classList.add("d-none");
+    document.getElementById("show-all").classList.remove("d-none");
 
-       const div= document.createElement('div');
-       div.classList.add("col");
+  }
+  const phoneContainer = document.getElementById("phones-container");
 
-       const {image , phone_name,brand } = phone ;
+  phoneContainer.innerHTML = "";
 
-       div.innerHTML = `
+  phones.forEach((phone) => {
+    const div = document.createElement("div");
+    div.classList.add("col");
+
+    const { image, phone_name, brand } = phone;
+
+    div.innerHTML = `
        <div class="card">
                 <img class = "mx-auto p-5" src="${image}" class="card-img-top" alt="...">
                 <div class="card-body">
@@ -33,33 +47,81 @@ const displayPhones = (phones) => {
                 </div>
               </div>
        
-       `
+       `;
 
-       phoneContainer.appendChild(div);
+    phoneContainer.appendChild(div);
+  });
+
+  loader(false) ;
+};
+
+// show all data
+
+const showAll = async () => {
+  const search = document.getElementById("search-text");
+  const searchText = search.value;
+  console.log(searchText);
+
+  const s =  searchText ||'iphone' 
+
+  const res = await fetch(
+    `https://openapi.programming-hero.com/api/phones?search=${s}`
+  );
+
+  const data = await res.json();
+ 
+  displayPhones(data.data);
+   document.getElementById("show-all").classList.add("d-none");
+};
+
+
+// spinner 
+
+ const loader = isLoading => {
+
+    const load =  document.getElementById("loader") ;
+
+    if( isLoading) {
+
+      load.classList.remove('d-none');
+    }
+    else {
+      load.classList.add('d-none');
+
+    }
+
+ }
+
+
+// enter button  
+
+const inputElement = document.getElementById("search-text");
+
+inputElement.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    
+
+    // console.log("Enter key pressed");
+
+  loadPhones();
+  }
+});
 
 
 
-       
-        
-    });
-}
 
+// search btn
+// document.getElementById('search-btn').addEventListener('click' , function(){
 
-document.getElementById('search-btn').addEventListener('click' , function(){
+// const search = document.getElementById('search-text') ;
+// const searchText= search.value ;
 
+// // console.log(searchText);
 
+// loadPhones(searchText);
 
-const search = document.getElementById('search-text') ;
-const searchText= search.value ;
+// search.value = '' ;
 
-// console.log(searchText);
+// })
 
-loadPhones(searchText);
-
-search.value = '' ;
-
-})
-
-
-
-loadPhones();
+loadPhones("iphone");
